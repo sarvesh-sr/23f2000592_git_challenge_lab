@@ -43,8 +43,8 @@ if __name__ == "__main__":
 
     op = args[0]
 
-    if op == "add" and len(args) >= 2:
+    if op in ["add", "-a"] and len(args) >= 2:
         task = " ".join(args[1:])
         add_task(task)
-    elif op == "list":
+    elif op in ["list", "-l"]:
         list_tasks()
