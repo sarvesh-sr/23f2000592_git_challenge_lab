@@ -48,9 +48,35 @@ def complete_task(task_id):
         for row in reader:
             if row["ID"] == task_id:
                 if row["Status"] == "1":
-                    print(f"Task {task_id} is already completed.")
+                    row["Status"] = "0"
+                    found = True
+                    print(f"Task {task_id} marked as pending.")
+                else:
+                    print(f"Task {task_id} is already pending.")
                     return
-                row["Status"] = "1"
+            rows.append(row)
+
+    if not found:
+        print(f"Task {task_id} not found.")
+        return
+
+    with open("data.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["ID", "Task", "Status"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def undone_task(task_id):
+    rows = []
+    found = False
+    with open("data.csv", "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row["ID"] == task_id:
+                if row["Status"] == "0":
+                    print(f"Task {task_id} is already pending.")
+                    return
+                row["Status"] = "0"
                 found = True
             rows.append(row)
 
@@ -63,7 +89,7 @@ def complete_task(task_id):
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f"Task {task_id} marked as completed.")
+    print(f"Task {task_id} marked as pending.")
 
 
 if __name__ == "__main__":
@@ -82,3 +108,5 @@ if __name__ == "__main__":
         list_tasks(show_all)
     elif (op == "done" or op == "-d") and len(args) >= 2:
         complete_task(args[1])
+    elif (op == "undone" or op == "-u") and len(args) >= 2:
+        undone_task(args[1])
