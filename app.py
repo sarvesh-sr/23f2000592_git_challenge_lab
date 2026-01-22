@@ -48,9 +48,9 @@ if __name__ == "__main__":
 
     op = args[0]
 
-    if op in ["add", "-a"] and len(args) >= 2:
+    if op == "add" or (op == "-a" and len(args) >= 2):
         task = " ".join(args[1:])
         add_task(task)
-    elif op in ["list", "-l"]:
-        show_all = "-a" in args[1:]
+    elif op == "list" or (op.startswith("-") and "l" in op):
+        show_all = "-a" in args[1:] or (op.startswith("-") and "a" in op and op != "-a")
         list_tasks(show_all)
