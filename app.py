@@ -25,14 +25,19 @@ def add_task(task):
     print(f"Task added successfully with ID {new_id}")
 
 
-def list_tasks():
+def list_tasks(show_all=False):
     with open("data.csv", "r") as f:
-        reader = csv.DictReader(f)
-        print(f"{'ID':<5} {'Task':<20} {'Status':<10}")
-        print("-" * 35)
-        for row in reader:
-            status = "Done" if row["Status"] == "1" else "Pending"
-            print(f"{row['ID']:<5} {row['Task']:<20} {status:<10}")
+        reader = list(csv.DictReader(f))
+
+    print(f"{'ID':<5} {'Task':<20} {'Status':<10}")
+    print("-" * 35)
+
+    for row in reversed(reader):
+        if not show_all and row["Status"] == "1":
+            continue
+
+        status = "Done" if row["Status"] == "1" else "Pending"
+        print(f"{row['ID']:<5} {row['Task']:<20} {status:<10}")
 
 
 if __name__ == "__main__":
@@ -47,4 +52,5 @@ if __name__ == "__main__":
         task = " ".join(args[1:])
         add_task(task)
     elif op in ["list", "-l"]:
-        list_tasks()
+        show_all = "-a" in args[1:]
+        list_tasks(show_all)
