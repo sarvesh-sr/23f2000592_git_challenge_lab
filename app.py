@@ -40,6 +40,58 @@ def list_tasks(show_all=False):
         print(f"{row['ID']:<5} {row['Task']:<20} {status:<10}")
 
 
+def complete_task(task_id):
+    rows = []
+    found = False
+    with open("data.csv", "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row["ID"] == task_id:
+                if row["Status"] == "1":
+                    print(f"Task {task_id} is already completed.")
+                    return
+                row["Status"] = "1"
+                found = True
+            rows.append(row)
+
+    if not found:
+        print(f"Task {task_id} not found.")
+        return
+
+    with open("data.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["ID", "Task", "Status"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"Task {task_id} marked as completed.")
+
+
+def undone_task(task_id):
+    rows = []
+    found = False
+    with open("data.csv", "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row["ID"] == task_id:
+                if row["Status"] == "0":
+                    print(f"Task {task_id} is already pending.")
+                    return
+                row["Status"] = "0"
+                found = True
+            rows.append(row)
+
+    if not found:
+        print(f"Task {task_id} not found.")
+        return
+
+    with open("data.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["ID", "Task", "Status"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"Task {task_id} marked as pending.")
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
 
@@ -54,3 +106,7 @@ if __name__ == "__main__":
     elif op == "list" or (op.startswith("-") and "l" in op):
         show_all = "-a" in args[1:] or (op.startswith("-") and "a" in op and op != "-a")
         list_tasks(show_all)
+    elif (op == "done" or op == "-d") and len(args) >= 2:
+        complete_task(args[1])
+    elif (op == "undone" or op == "-u") and len(args) >= 2:
+        undone_task(args[1])
