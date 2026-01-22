@@ -48,12 +48,10 @@ def complete_task(task_id):
         for row in reader:
             if row["ID"] == task_id:
                 if row["Status"] == "1":
-                    row["Status"] = "0"
-                    found = True
-                    print(f"Task {task_id} marked as pending.")
-                else:
-                    print(f"Task {task_id} is already pending.")
+                    print(f"Task {task_id} is already completed.")
                     return
+                row["Status"] = "1"
+                found = True
             rows.append(row)
 
     if not found:
@@ -64,6 +62,8 @@ def complete_task(task_id):
         writer = csv.DictWriter(f, fieldnames=["ID", "Task", "Status"])
         writer.writeheader()
         writer.writerows(rows)
+
+    print(f"Task {task_id} marked as completed.")
 
 
 def undone_task(task_id):
